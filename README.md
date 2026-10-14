@@ -36,24 +36,25 @@ When work moves from one plan to another, add a decision in the old plan saying 
 
 ### Core sections
 
-Nearly every plan has these.
+Nearly every plan has these, in this order.
 
 | Section | Purpose |
 |---|---|
 | Title | `# Plan: <feature> — <slice>`, so it's clear which part of a larger feature this plan covers. |
 | Context | Why the work exists, what came before, and the current state. Date anything that will go stale ("as of 2026-05-05"). |
-| Goal | What "done" means, in a few bullets. |
-| Requirements (R1…Rn) | The core of the plan: the units of work. See [Requirement lifecycle](#requirement-lifecycle). |
+| Goal | What "done" means: the outcome, not how to get there, in a sentence or a few bullets. |
 | Decisions | Constraints that apply across requirements, ideally with the reason for each. |
 | Acceptance | How to tell the whole plan is done: builds, tests, end-to-end checks. |
+| Requirements (R1…Rn) | The core of the plan: the units of work. See [Requirement lifecycle](#requirement-lifecycle). |
+
+Requirements come last on purpose. The sections above them are short and change rarely, so they form a stable frame: whoever reads the plan top-down, person or agent, knows the constraints and what "done" means before reaching the work. Requirements are the long, moving part, and the timeline runs to the end of the file, so new work is added at the bottom.
 
 ### Optional sections
 
-Add these when the feature needs them.
+Add these when the feature needs them. They go before Requirements, with the rest of the frame.
 
 | Section | Purpose |
 |---|---|
-| Strategy | End-to-end flow, deployment order, branch strategy, and the reasoning behind each. |
 | Scope | What is in and what is explicitly out. |
 | Security considerations | Threats and mitigations specific to this feature. |
 | Key files | Starting points in the codebase. See [Key files](#key-files). |
@@ -171,6 +172,7 @@ Put these rules in the agent instructions file:
 
 - **Keep plans under version control.** The plan only shows the current state; git holds the history of what was intended and how it changed.
 - **Shrink old requirements.** Once a requirement is completed and its PR is merged, cut it to 2–3 lines plus the PR link, so the plan stays short enough to read in full.
+- **Draft section by section with AI.** Settle Context and Goal before asking for requirements. A plan generated in one pass looks complete but tends to blur the goal with how to get there.
 
 ## Example plan
 
@@ -188,6 +190,20 @@ a week to email PDFs manually (as of 2026-05-05). The HTML invoice template alre
 
 - Users download any invoice as a PDF from the invoice page
 - PDFs match the HTML invoice visually
+
+## Decisions
+
+1. PDFs are generated server-side, never in the browser, because fonts rendered
+   inconsistently across browsers
+2. PDF generation is asynchronous, because invoices with hundreds of lines exceeded
+   the request timeout
+3. Emailing the PDF is handled in `invoice-sharing.md`, which covers all outbound
+   invoice delivery
+
+## Acceptance
+
+- Backend and frontend build; all tests pass
+- End-to-end: open invoice → Download PDF → file matches the HTML invoice
 
 ## Requirements
 
@@ -209,18 +225,4 @@ a week to email PDFs manually (as of 2026-05-05). The HTML invoice template alre
 
 - Limit `POST /invoices/{id}/pdf` to 10 requests per user per minute
 - Return 429 with a retry hint when the limit is hit
-
-## Decisions
-
-1. PDFs are generated server-side, never in the browser, because fonts rendered
-   inconsistently across browsers
-2. PDF generation is asynchronous, because invoices with hundreds of lines exceeded
-   the request timeout
-3. Emailing the PDF is handled in `invoice-sharing.md`, which covers all outbound
-   invoice delivery
-
-## Acceptance
-
-- Backend and frontend build; all tests pass
-- End-to-end: open invoice → Download PDF → file matches the HTML invoice
 ```
