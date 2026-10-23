@@ -45,7 +45,7 @@ Read the whole plan before doing anything else.
 - Sections, in order: Title, Context, Goal, Decisions, Acceptance, optional sections (Scope, Security considerations, Key files, custom), then Requirements last.
 - Each requirement is a `### Rn.` heading, either:
   - **Completed:** `### ✅ Rn. <title> (COMPLETED, PR #1234)`. The body is written as-built, in past tense, and describes what exists in the code now.
-  - **Planned:** `### Rn. <title>`. The body is in future tense: context, proposed implementation, acceptance.
+  - **Planned:** `### Rn. <title>`. The body is in future tense: context, proposed implementation, acceptance. It says what to do and what not to do (`Do:` / `Don't:` lines), for each part when it has several (endpoints, components, sections of a doc).
 - The order of requirements is a timeline: completed ones first, then planned ones. The next requirement is the first one without ✅. There is no "in progress" marker.
 - Completed requirements are history and don't move. Planned ones can be reordered, rewritten or removed.
 - Decisions are a numbered list stated as they stand now, with a reason when it isn't obvious. When a decision changes, rewrite it instead of striking it through.
@@ -71,11 +71,11 @@ Work out the action from the request. Free text is fine (`mark r1 as completed` 
 
 ### next
 
-Name the first requirement without ✅ and summarize what it asks for. Check it against the code: if the code contradicts the plan, or part of it already exists, stop and say so instead of quietly picking one. Don't start implementing unless asked.
+Name the first requirement without ✅ and summarize what it asks for and what it rules out. Check it against the code: if the code contradicts the plan, or part of it already exists, stop and say so instead of quietly picking one. Don't start implementing unless asked.
 
 ### add <requirement>
 
-Add a planned requirement at the end of Requirements (or where the user says), numbered one higher than the current highest. Future tense: context, proposed implementation, acceptance. If the request is vague, ask before drafting the details.
+Add a planned requirement at the end of Requirements (or where the user says), numbered one higher than the current highest. Future tense: context, proposed implementation with `Do:` and `Don't:` lines (for each part, if it has several), acceptance. If the request is vague, or you can't tell what it should rule out, ask before drafting the details.
 
 ### drop Rn
 
@@ -87,6 +87,7 @@ Report problems; don't fix them unless asked:
 
 - Completed requirements that don't match the code, or have no PR (and no "no code needed").
 - Planned requirements the code already contradicts or already implements.
+- Planned requirements with no `Don't:` lines.
 - Order violations (a planned requirement above a completed one).
 - Work mentioned only in prose sections, with no requirement.
 - Unresolved notes, stale or undated facts in Context, a plan-wide key files list.

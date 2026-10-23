@@ -69,9 +69,15 @@ Each requirement is a `### Rn.` heading. A requirement is either completed or pl
 | State | Heading | How the body reads |
 |---|---|---|
 | Completed | `### ✅ R1. PDF generation endpoint (COMPLETED, PR #1201)` | **Rewritten as-built**, in past tense. Describes what exists in the code now. |
-| Planned | `### R2. Download button — Frontend` | Future tense. Context, proposed implementation, acceptance. Code snippets are fine. |
+| Planned | `### R2. Download button — Frontend` | Future tense. Context, proposed implementation with what to do and what not to do, acceptance. Code snippets are fine. |
 
 **The order of the requirements is a timeline.** Completed requirements come first, then planned ones, always in that order. The next thing to work on is the first planned requirement, right after the last completed one. There's no separate "in progress" marker: if R1 is done, R2 is in progress. Completed requirements are history and don't move. Planned ones can be reordered, rewritten or removed as the plan changes. Removing one is recorded in [Decisions](#decisions).
+
+### Say what not to do
+
+A planned requirement says what to do and also what not to do. The Don't lines mark its edges: work that belongs to another requirement or plan, something that would repeat what already exists, or a guess that should be a question instead. Without them, whoever implements it, especially an AI agent, tends to fill the gaps with plausible work nobody asked for.
+
+When a requirement has several parts (endpoints, components, sections of a doc), give each part its own Do and Don't, so each edge sits next to the work it limits. See R2 and R3 in the [example plan](#example-plan).
 
 ### Rewriting as-built
 
@@ -166,7 +172,8 @@ Put these rules in the agent instructions file:
 1. If a plan is provided, read the whole thing before starting.
 2. Treat ✅ requirements as facts about the current code, and planned ones as proposals to check against the code. The next requirement to implement is the first one without ✅.
 3. If the code contradicts the plan, stop and say so instead of silently picking one.
-4. After implementing a requirement, propose the as-built rewrite, plus a decision for anything important that turned out differently from the plan.
+4. Don't do what a requirement's Don't lines rule out. If it seems necessary, say so and ask.
+5. After implementing a requirement, propose the as-built rewrite, plus a decision for anything important that turned out differently from the plan.
 
 ## Tips
 
@@ -214,15 +221,21 @@ a week to email PDFs manually (as of 2026-05-05). The HTML invoice template alre
 
 ### R2. Download button — Frontend
 
-- Add a "Download PDF" button to the invoice page
-- On click: start the job, poll the status endpoint, then trigger the download
-- Show a spinner next to the label while the job runs; show an error message on failure
+- **Button**
+  - Do: add a "Download PDF" button to the invoice page. Show a spinner next to the
+    label while the job runs, and an error message on failure
+  - Don't: add an "Email PDF" option; emailing is handled in `invoice-sharing.md`
+    (Decision 3)
+- **Download**
+  - Do: on click, start the job, poll the status endpoint, then trigger the download
+  - Don't: fall back to rendering the PDF in the browser when the job fails (Decision 1)
 - Tests: happy path, failed job, polling timeout
 
 > To verify: should polling stop after a fixed time or keep going until the job ends?
 
 ### R3. Rate-limit PDF generation — Backend
 
-- Limit `POST /invoices/{id}/pdf` to 10 requests per user per minute
-- Return 429 with a retry hint when the limit is hit
+- Do: limit `POST /invoices/{id}/pdf` to 10 requests per user per minute, and return
+  429 with a retry hint when the limit is hit
+- Don't: limit `GET /invoices/pdf-jobs/{jobId}`, which the download button polls
 ```
