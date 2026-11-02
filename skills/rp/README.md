@@ -36,7 +36,7 @@ If `/rp` doesn't show up in a running session, start a new one.
 | `/rp next` | Names the next requirement and checks it against the code. Doesn't start implementing. |
 | `/rp add rate-limit the PDF endpoint` | Adds a planned requirement at the end. |
 | `/rp drop R3` | Deletes a planned requirement and records a decision saying why and where the work lives now. |
-| `/rp check` | Reports where the plan and the code disagree, order problems, untracked work, stale notes. Doesn't fix them. |
+| `/rp check` | Reports where the plan and the code disagree, order problems, untracked work, requirements that aren't self-contained, stale notes. Doesn't fix them. |
 
 Free text works too: `/rp mark r1 as completed` is the same as `/rp mark R1 completed`.
 

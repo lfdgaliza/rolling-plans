@@ -58,6 +58,7 @@ Add these when the feature needs them. They go before Requirements, with the res
 | Scope | What is in and what is explicitly out. |
 | Security considerations | Threats and mitigations specific to this feature. |
 | Key files | Starting points in the codebase. See [Key files](#key-files). |
+| Working on this plan | Paths, tools and access that every requirement relies on, so each one can be started from the plan alone. See [Make it self-contained](#make-it-self-contained). Files specific to one requirement stay in that requirement. |
 | Anything custom | Migration steps, rollback plan, open questions: whatever this feature needs. |
 
 Rules that apply to the whole codebase (language version, formatting, which HTTP client to use) belong in the shared agent instructions file, not in each plan. Otherwise every plan repeats them and they eventually contradict each other.
@@ -78,6 +79,17 @@ Each requirement is a `### Rn.` heading. A requirement is either completed or pl
 A planned requirement says what to do and also what not to do. The Don't lines mark its edges: work that belongs to another requirement or plan, something that would repeat what already exists, or a guess that should be a question instead. Without them, whoever implements it, especially an AI agent, tends to fill the gaps with plausible work nobody asked for.
 
 When a requirement has several parts (endpoints, components, sections of a doc), give each part its own Do and Don't, so each edge sits next to the work it limits. See R2 and R3 in the [example plan](#example-plan).
+
+### Make it self-contained
+
+A planned requirement holds everything needed to start it from the plan alone, in a fresh session, by a person or an agent. Whatever lives only in a chat, a meeting or a hand-written prompt is lost when the next session starts, and gets rediscovered or guessed. Say:
+
+- **What one session takes:** the whole requirement, or one checkbox at a time when it's too big for one go.
+- **What to read first:** the files, docs or earlier requirements it builds on.
+- **What it needs that isn't obvious:** tools, access, where the code lives, test data.
+- **Where to stop:** for review, before a checkbox is ticked or the requirement is marked completed.
+
+Facts that every requirement needs, such as where the docs live or which tools to use, go in one plan-level section instead of being repeated in each requirement (see [Optional sections](#optional-sections)). Before saving a planned requirement, read it as someone who has seen nothing but the plan.
 
 ### Rewriting as-built
 
@@ -174,6 +186,7 @@ Put these rules in the agent instructions file:
 3. If the code contradicts the plan, stop and say so instead of silently picking one.
 4. Don't do what a requirement's Don't lines rule out. If it seems necessary, say so and ask.
 5. After implementing a requirement, propose the as-built rewrite, plus a decision for anything important that turned out differently from the plan.
+6. When writing or changing a planned requirement, make it self-contained: move anything it relies on from the conversation into the requirement or the plan.
 
 ## Tips
 
